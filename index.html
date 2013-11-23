@@ -94,6 +94,7 @@ function shatterLetters(el, after) {
 		$this.css({"position": "relative"});
 		$(this)
 		//.delay(i*10)	// Remove to explode all at once
+		.clearQueue()
 		.transition({
 			rotate: $this.hasClass("positive") ? 0 : (random(-360,360) + "deg"),
 			scale: random(2,5),
