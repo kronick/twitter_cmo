@@ -23,7 +23,10 @@ function Tweet(text, author, brandwords, categories) {
 
 	this.addToDom();
 
-	this.bubble = new Bubble();
+	this.bubbles = [];
+	for(var i=0; i<30; i++) {
+		this.bubbles.push( new Bubble() );
+	}
 
 	this.el.hide();	// Start hidden
 }
@@ -62,7 +65,9 @@ Tweet.prototype = {
 			   			 left: this.anchor.left,
 			   			 top: this.anchor.top},
 			   			duration);
-
+		for(var i=0; i<this.bubbles.length; i++) {
+			this.bubbles[i].enter(random(500,2000), delay + random(5000,10000));
+		}
 	},
 	exit: function(duration, delay) {
 		/*

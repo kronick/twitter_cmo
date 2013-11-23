@@ -9,9 +9,9 @@
 <body>
 <!--<script src="jquery-1.10.2.js"></script>-->
 <script src="jquery-2.0.3.js"></script>
-<!--<script src="jquery-svg/jquery.svg.js"></script>-->
+<script src="jquery-svg/jquery.svg.js"></script>
 <script src="jquery.transit.min.js"></script>
-<!--<script type="text/javascript" src="jquery-svg/jquery.svgdom.js"></script>-->
+<script type="text/javascript" src="jquery-svg/jquery.svgdom.js"></script>
 <script src="snap.svg.js"></script>
 
 <script src="tweet.js"></script>
@@ -44,7 +44,12 @@ $(document).ready(function() {
 	 rotateLogo();
 	 jiggleTweets();
 
-	 $(".tweet").click(function() { shatterLetters(this); });
+	 $(".tweet").click(function() {
+	 	$("#svg_container").fadeOut(1000);
+	 	shatterLetters(this, function() {
+	 		$("#svg_container").fadeIn(1000);
+	 	});
+	 });
 });
 
 
@@ -66,7 +71,7 @@ function jiggleTweets() {
 	.transition({rotate: '0deg', y: '0px'}, 500, function() { jiggleTweets(); });
 }
 
-function shatterLetters(el) {
+function shatterLetters(el, after) {
 	var el = $(el);
 	// A span for every letter
 	// TODO: Group words in a nowrap span
@@ -98,6 +103,7 @@ function shatterLetters(el) {
 		}, 2000, 'out', function(e, off) {
 			return function() {
 				e.position(off);
+				//if(after) after();
 			}}($this, off)
 		)
 		.delay(100)
@@ -107,6 +113,7 @@ function shatterLetters(el) {
 			x: 0, y: 0,
 			opacity: 1
 		}, 6000, 'in', function() {
+			if(after) after();
 			//el.
 			//shatterLetters(el)
 		});
