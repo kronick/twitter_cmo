@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,700,300' rel='stylesheet' type='text/css'>-->
+<link rel="stylesheet" type="text/css" href="css/sketches.css">
+</head>
+<body>
+<!--<script src="jquery-1.10.2.js"></script>-->
+<script src="jquery-2.0.3.js"></script>
+<!--<script src="jquery-svg/jquery.svg.js"></script>-->
+<script src="jquery.transit.min.js"></script>
+<!--<script type="text/javascript" src="jquery-svg/jquery.svgdom.js"></script>-->
+<script src="snap.svg.js"></script>
+
+<script src="tweet.js"></script>
+<script src="bubble.js"></script>
+<script src="sliding_label.js"></script>
+<script src="utilities.js"></script>
+
+<script>
+
+var tweets = [];
+
+$(document).ready(function() {
+	//$("#svg_container").svg();	// Initialize the SVG canvas
+	var t = new Tweet("Omg I love my husband. I ran out of #redbull and he brought me another one pic.twitter.com/w0Dn2GbhY7", "@BrookeGomez87");
+	t.hide();
+	tweets.push(t);
+
+	 t = new Tweet("Me showing off at a house party. I think everyone appreciated <span class='positive'>free cocktails</span> :P (<span class='positive'>Thanks</span> @BeamGlobal once again) pic.twitter.com/GMjh6jdzSh", "@benmooe",
+	 				["BeamGlobal"], []
+	 	);
+	 t.stats.followers = 1381;
+	 t.stats.retweets = 10126;
+	 t.stats.favorites = 3832;
+
+	 t.enter(1000, 1000);
+	 //t.exit(5000, 10000);
+	 tweets.push(t);
+	
+	
+	 rotateLogo();
+	 jiggleTweets();
+
+	 $(".tweet").click(function() { shatterLetters(this); });
+});
+
+
+function rotateLogo(brand) {
+	$("#brand_logo").transition({
+		perspective: '700px',
+		rotateY: '+=360deg',
+		delay: '5000'
+	}, 5000, function() { rotateLogo(); });
+}
+
+function jiggleTweets() {
+	$(".brandname").transition({
+		rotate: random(-2,2) + 'deg',
+		y: '-10px',
+		delay: '500'
+	}, 500)
+	//.transition({rotate: '-1deg'}, 500)
+	.transition({rotate: '0deg', y: '0px'}, 500, function() { jiggleTweets(); });
+}
+
+function shatterLetters(el) {
+	var el = $(el);
+	// A span for every letter
+	// TODO: Group words in a nowrap span
+	el.children().andSelf().contents().each(function(){
+    if (this.nodeType == 3) {
+        var $this = $(this);
+        $this.replaceWith($this.text().replace(/(\S)/g, "<span class='letter'>$&</span>"));
+    }
+	});
+	el.css("display", "inline-block");
+	$("span", el).each(function(i) {
+		// Fling this span to a random spot
+
+		var off = $(this).position();
+		//console.log(off);
+		
+		$this = $(this);
+		$(this).css({"display": "inline-block"});
+	
+		$this.css({"position": "relative"});
+		$(this)
+		//.delay(i*10)	// Remove to explode all at once
+		.transition({
+			rotate: $this.hasClass("positive") ? 0 : (random(-360,360) + "deg"),
+			scale: random(2,5),
+			x: "+=" + ($this.hasClass("positive") ? .25 : 1) * random(-1000,1000) + "px",
+			y: "+=" + ($this.hasClass("positive") ? .25 : 1) * random(-1000,1000) + "px",
+			opacity: 0
+		}, 2000, 'out', function(e, off) {
+			return function() {
+				e.position(off);
+			}}($this, off)
+		)
+		.delay(100)
+		.transition({
+			rotate: 0,
+			scale: 1,
+			x: 0, y: 0,
+			opacity: 1
+		}, 6000, 'in', function() {
+			//el.
+			//shatterLetters(el)
+		});
+	});
+}
+</script>
+<div id="controller">
+	<!--
+	<h2>OPTIONS:</h2>
+	<div class="button" onClick="layoutDevices('random')">Random</div>
+	<div class="button" onClick="layoutDevices('random grid')">Random Grid</div>
+	<div class="button" onClick="layoutDevices('tree')">Tree</div>
+	<div class="button" onClick="layoutDevices('physics')">Physics</div>
+	<br /><br />
+	<div class="button" onClick="toggleShading(this)">Toggle cells</div>
+	<div class="button" onClick="toggleConnectors(this)">Toggle connector style</div>
+	<br /><br />
+	<div class="button" onClick="populateDevices(); layoutDevices('physics')">New Network</div>
+-->
+</div>
+
+<div id="container">
+<div id="brand_logo">
+	TM™
+</div>
+</div>
+
+
+<div id="svg_container">
+<svg id="svgelem" style="width: 100%; height: 100%"></svg>
+</div>
+<!--<svg id="svgelem" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0" y1="0" x2="200" y2="100"
+          style="stroke:red;stroke-width:2px"></line>
+</svg>-->
+</body>
+</html>
